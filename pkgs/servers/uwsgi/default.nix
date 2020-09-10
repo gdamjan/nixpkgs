@@ -80,7 +80,8 @@ stdenv.mkDerivation rec {
   buildInputs =  [ jansson pcre libxcrypt ]
               ++ lib.optionals (stdenv.isDarwin && stdenv.isAarch64) [ expat zlib ]
               ++ lib.optional withPAM pam
-              ++ lib.optional withSystemd systemd
+              ++ lib.optional withSystemd (lib.getLib systemd)
+              ++ lib.optional withSystemd (lib.getDev systemd)
               ++ lib.optional withCap libcap
               ++ lib.concatMap (x: x.inputs) needed
               ;
