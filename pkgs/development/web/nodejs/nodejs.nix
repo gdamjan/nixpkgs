@@ -150,8 +150,10 @@ let
         done
       ''}
 
-      # install the missing headers for node-gyp
-      cp -r ${lib.concatStringsSep " " copyLibHeaders} $out/include/node
+      ${lib.optionalString (enableNpm) ''
+        # install the missing headers for node-gyp
+        cp -r ${lib.concatStringsSep " " copyLibHeaders} $out/include/node
+      ''}
 
       # assemble a static v8 library and put it in the 'libv8' output
       mkdir -p $libv8/lib
@@ -186,6 +188,9 @@ let
       Libs: -L$libv8/lib -lv8 -pthread -licui18n -licuuc
       Cflags: -I$libv8/include
       EOF
+    '';
+    preFixup = ''
+      rm -rf $out/include
     '';
 
     passthru.updateScript = import ./update.nix {
